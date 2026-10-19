@@ -1,4 +1,4 @@
-/*/*
+/*
  * Courier Finder v2
  * Improved weighted scoring engine
  */
@@ -207,13 +207,24 @@ function normaliseTrackingNumber(value) {
 }
 
 function getConfidence(score) {
-  if (score >= 90)
-    return { label: `High confidence (${score}%)`, className: "high" };
+  if (score >= 90) {
+    return {
+      label: `High confidence (${score}%)`,
+      className: "high"
+    };
+  }
 
-  if (score >= 60)
-    return { label: `Medium confidence (${score}%)`, className: "medium" };
+  if (score >= 60) {
+    return {
+      label: `Medium confidence (${score}%)`,
+      className: "medium"
+    };
+  }
 
-  return { label: `Low confidence (${score}%)`, className: "low" };
+  return {
+    label: `Low confidence (${score}%)`,
+    className: "low"
+  };
 }
 
 function getBonusScore(carrierId, trackingNumber) {
@@ -256,7 +267,6 @@ function findMatches(trackingNumber) {
   for (const carrier of CARRIERS) {
     for (const rule of carrier.rules) {
       if (rule.regex.test(trackingNumber)) {
-
         const extra = getBonusScore(
           carrier.id,
           trackingNumber
@@ -284,11 +294,12 @@ function findMatches(trackingNumber) {
     }
   }
 
-  const results = [...bestByCarrier.values()]
-    .sort((a, b) => b.score - a.score);
+  const results = [...bestByCarrier.values()].sort(
+    (a, b) => b.score - a.score
+  );
 
   const strongWinner =
-    results.length &&
+    results.length > 0 &&
     results[0].score >= 90;
 
   if (strongWinner) {
@@ -322,7 +333,6 @@ function carrierLogo(carrier) {
 }
 
 function renderMatch(match, index) {
-
   const confidence = getConfidence(match.score);
 
   const reasonsHtml =
@@ -372,7 +382,10 @@ function renderMatch(match, index) {
   `;
 }
 
+/*
  * Courier Finder
  * This is a heuristic matcher, not a carrier verification service.
- * Patterns are approximate and may overlap. Update them only after checking
- * each carrier's current official 
+ * Patterns are approximate and may overlap.
+ * Update them only after checking each carrier's
+ * current official tracking-number formats.
+ */
