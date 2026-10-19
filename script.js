@@ -36,8 +36,8 @@ const CARRIERS = [
     url: "https://www.evri.com/track-a-parcel",
     rules: [
       {
-        regex: /^H[A-Z0-9]{15}$/i,
-        score: 95,
+        regex: /^H[A-Z0-9]{10,20}$/i,
+        score: 99,
         strength: "strong",
         label: "Evri H-prefixed format",
         note: "Strong match for modern Evri tracking numbers."
@@ -203,7 +203,10 @@ const CARRIERS = [
 ];
 
 function normaliseTrackingNumber(value) {
-  return value.toUpperCase().replace(/[\s-]+/g, "");
+  return String(value)
+    .toUpperCase()
+    .replace(/[\s-]+/g, "")
+    .trim();
 }
 
 function getConfidence(score) {
@@ -232,19 +235,19 @@ function getBonusScore(carrierId, trackingNumber) {
   const reasons = [];
 
   if (carrierId === "evri") {
-    if (trackingNumber.startsWith("H")) {
-      bonus += 15;
+    if (/^H/i.test(trackingNumber)) {
+      bonus += 25;
       reasons.push("Starts with H");
     }
 
-    if (trackingNumber.length === 16) {
+    if (trackingNumber.length >= 12) {
       bonus += 10;
-      reasons.push("16 characters long");
+      reasons.push("Typical Evri length");
     }
 
     if (/[A-Z]/.test(trackingNumber)) {
       bonus += 5;
-      reasons.push("Contains letter-number pattern");
+      reasons.push("Contains letters");
     }
   }
 
@@ -262,7 +265,27 @@ function getBonusScore(carrierId, trackingNumber) {
 }
 
 function findMatches(trackingNumber) {
+  trackingNumber =
+    normaliseTrackingNumber(trackingNumber);
+
   const matches = [];
+
+  if (/^H[A-Z0-9]{10,20}$/i.test(trackingNumber)) {
+    const evriCarrier =
+      CARRIERS.find(c => c.id === "evri");
+
+    matches.push({
+      carrier: evriCarrier,
+      score: 99,
+      format: "Evri H-prefixed format",
+      note: "Strong match for modern Evri tracking numbers.",
+      strength: "strong",
+      reasons: [
+        "Starts with H",
+        "Modern Evri format"
+      ]
+    });
+  }
 
   for (const carrier of CARRIERS) {
     for (const rule of carrier.rules) {
@@ -274,7 +297,10 @@ function findMatches(trackingNumber) {
 
         matches.push({
           carrier,
-          score: Math.min(rule.score + extra.bonus, 99),
+          score: Math.min(
+            rule.score + extra.bonus,
+            99
+          ),
           format: rule.label,
           note: rule.note,
           strength: rule.strength,
@@ -287,28 +313,19 @@ function findMatches(trackingNumber) {
   const bestByCarrier = new Map();
 
   for (const match of matches) {
-    const current = bestByCarrier.get(match.carrier.id);
+    const current =
+      bestByCarrier.get(match.carrier.id);
 
     if (!current || match.score > current.score) {
-      bestByCarrier.set(match.carrier.id, match);
+      bestByCarrier.set(
+        match.carrier.id,
+        match
+      );
     }
   }
 
-  const results = [...bestByCarrier.values()].sort(
-    (a, b) => b.score - a.score
-  );
-
-  const strongWinner =
-    results.length > 0 &&
-    results[0].score >= 90;
-
-  if (strongWinner) {
-    return results.filter(
-      x => x.score >= results[0].score - 15
-    );
-  }
-
-  return results;
+  return [...bestByCarrier.values()]
+    .sort((a, b) => b.score - a.score);
 }
 
 function safeText(value) {
@@ -333,7 +350,8 @@ function carrierLogo(carrier) {
 }
 
 function renderMatch(match, index) {
-  const confidence = getConfidence(match.score);
+  const confidence =
+    getConfidence(match.score);
 
   const reasonsHtml =
     match.reasons.length
