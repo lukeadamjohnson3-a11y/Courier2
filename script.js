@@ -242,4 +242,33 @@ form.addEventListener("submit", event => {
 
   const raw = input.value.trim();
   if (!raw) {
-    error.textContent = "Enter a tracking number
+    error.textContent = "Enter a tracking number to continue.";
+    error.hidden = false;
+    input.focus();
+    return;
+  }
+
+  const trackingNumber = normaliseTrackingNumber(raw);
+  if (trackingNumber.length < 6) {
+    error.textContent = "That number looks too short. Check it and try again.";
+    error.hidden = false;
+    input.focus();
+    return;
+  }
+
+  if (trackingNumber.length > 50 || !/^[A-Z0-9]+$/.test(trackingNumber)) {
+    error.textContent = "Use only letters and numbers in the tracking number. Spaces and hyphens are okay.";
+    error.hidden = false;
+    input.focus();
+    return;
+  }
+
+  renderResults(trackingNumber, findMatches(trackingNumber));
+});
+
+input.addEventListener("input", () => {
+  if (!error.hidden) {
+    error.hidden = true;
+    error.textContent = "";
+  }
+});
