@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A free, privacy-friendly helper that suggests which courier may be handling a parcel from its tracking number.">
+  <title>Courier Finder — Identify your parcel carrier</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Courier Finder home">
+        <span class="brand-mark" aria-hidden="true">📦</span>
+        <span>
+          <span class="brand-name">Courier Finder</span>
+          <span class="brand-subtitle">Find which courier may have your parcel</span>
+        </span>
+      </a>
+      <span class="header-pill"><span aria-hidden="true">🇬🇧</span> UK-focused · no account needed</span>
+    </header>
+
+    <section class="hero panel" aria-labelledby="page-title">
+      <div class="eyebrow">FREE TRACKING-NUMBER HELPER</div>
+      <h1 id="page-title">Who's delivering your parcel?</h1>
+      <p class="intro">Enter a tracking number and we'll compare it with common courier-number patterns. No tracking data is sent to a server.</p>
+
+      <form id="finder-form" novalidate>
+        <label for="tracking-number">Tracking number</label>
+        <div class="search-row">
+          <input id="tracking-number" name="tracking-number" type="text" inputmode="text"
+            autocomplete="off" autocapitalize="characters" spellcheck="false"
+            placeholder="e.g. JD0002256789012345" aria-describedby="input-help input-error" maxlength="80" required>
+          <button type="submit"><span aria-hidden="true">⌕</span> Find courier</button>
+        </div>
+        <p class="field-help" id="input-help">Paste the number as provided by the sender. Spaces and hyphens are ignored for matching.</p>
+        <p class="error-message" id="input-error" role="alert" hidden></p>
+      </form>
+
+      <section id="results" class="results" aria-live="polite" aria-atomic="true" hidden></section>
+
+      <div class="privacy-note">
+        <span aria-hidden="true">🔒</span>
+        <span><strong>Privacy-friendly:</strong> this page checks formats in your browser. It does not verify whether a parcel exists or retrieve live delivery status.</span>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <section class="panel" aria-labelledby="courier-heading">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">CARRIER COVERAGE</div>
+            <h2 id="courier-heading">Couriers included</h2>
+          </div>
+          <span class="small-muted">Pattern-based estimates</span>
+        </div>
+        <div class="carrier-grid">
+          <article class="carrier-card"><span class="carrier-icon royal-mail">RM</span><span><strong>Royal Mail</strong><small>UK postal tracking</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon dpd">dpd</span><span><strong>DPD UK</strong><small>Parcel delivery</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon evri">evri</span><span><strong>Evri</strong><small>Parcel delivery</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon yodel">Y</span><span><strong>Yodel</strong><small>Parcel delivery</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon dhl">DHL</span><span><strong>DHL</strong><small>Express and eCommerce</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon ups">UPS</span><span><strong>UPS</strong><small>International courier</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon fedex">FedEx</span><span><strong>FedEx</strong><small>International courier</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon parcelforce">PF</span><span><strong>Parcelforce</strong><small>UK and international</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon inpost">InPost</span><span><strong>InPost</strong><small>Parcel lockers</small></span></article>
+          <article class="carrier-card"><span class="carrier-icon amazon">a</span><span><strong>Amazon Logistics</strong><small>Amazon deliveries</small></span></article>
+        </div>
+      </section>
+
+      <aside class="panel how-panel" aria-labelledby="how-heading">
+        <div class="eyebrow">HOW IT WORKS</div>
+        <h2 id="how-heading">Three quick steps</h2>
+        <ol class="steps">
+          <li><span class="step-number">1</span><div><strong>Enter your number</strong><p>Paste the tracking number from your email or message.</p></div></li>
+          <li><span class="step-number">2</span><div><strong>We compare formats</strong><p>Known prefixes, lengths and character patterns are checked locally.</p></div></li>
+          <li><span class="step-number">3</span><div><strong>Open the courier site</strong><p>Use the link to try the carrier's official tracking page.</p></div></li>
+        </ol>
+        <div class="notice">
+          <strong>Important limitation</strong>
+          <p>Tracking formats overlap and carriers sometimes hand parcels to partners. A suggested match is not proof. If confidence is low, try the multi-carrier link or check your dispatch email.</p>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <p>Independent helper; not affiliated with any courier. Courier names and trademarks belong to their respective owners.</p>
+      <p>Made to run as a static website — no paid API or account required.</p>
+    </footer>
+  </main>
+</body>
+</html>
